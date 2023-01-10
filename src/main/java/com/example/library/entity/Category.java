@@ -11,7 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class Author {
+public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -21,9 +22,6 @@ public class Author {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "author_has_book",
-            joinColumns = {@JoinColumn(name = "author_id")},
-            inverseJoinColumns = {@JoinColumn(name = "book_id")})
+    @OneToMany(mappedBy = "category")
     private List<Book> books;
 }

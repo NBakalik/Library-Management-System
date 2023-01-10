@@ -3,7 +3,10 @@ package com.example.library.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Getter
 @Setter
@@ -14,8 +17,15 @@ public class Book {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @NonNull
+    @Column(name = "name")
     private String name;
+
+    @NonNull
     @ManyToOne
-    @JoinColumn(name = "id")
-    private Author author;
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToMany(mappedBy = "books")
+    private List<Author> authors;
 }
