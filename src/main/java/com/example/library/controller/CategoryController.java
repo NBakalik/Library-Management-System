@@ -8,9 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("categories")
+@RequestMapping("/api")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -20,7 +21,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("")
+    @GetMapping("/categories")
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategory();
         if (categories.isEmpty()) {
@@ -29,24 +30,29 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/categories/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable("id") int id) {
-        Category category = categoryService.getCategory(id);
-        if (category == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Optional<Category> category = categoryService.getCategory(id);
+        if (category.isPresent()) {
+            return new ResponseEntity<>(category.get(), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(category, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @PostMapping("")
+    @PostMapping("/categories")
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        return new ResponseEntity<>(categoryService.addCategory(category), HttpStatus.CREATED);
+        if(category.getId() == null) {
+            return new ResponseEntity<>(categoryService.addCategory(category), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/categories/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable("id") int id, @RequestBody Category newCategory) {
-        if (categoryService.getCategory(id) != null) {
+        Optional<Category> category = categoryService.getCategory(id);
+        if (category.isPresent()) {
             newCategory.setId(id);
             return new ResponseEntity<>(categoryService.updateCategory(newCategory), HttpStatus.OK);
         } else {
@@ -54,18 +60,18 @@ public class CategoryController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/categories/{id}")
     public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") int id) {
-        Category category = categoryService.deleteCategory(id);
-        if (category != null) {
+        Optional<Category> category = categoryService.deleteCategory(id);
+        if (category.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<HttpStatus> deleteAllTutorials() {
+    @DeleteMapping("/categories")
+    public ResponseEntity<HttpStatus> deleteAllCategories() {
         categoryService.deleteAll();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

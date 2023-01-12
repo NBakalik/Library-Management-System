@@ -43,4 +43,8 @@ public class AuthorService {
     public void deleteAll() {
         authorRepository.deleteAll();
     }
+
+    public List<Author> findAuthorsByBooksId(int id){
+        return authorRepository.findAuthorsByBooksId(id);
+    }
 }
