@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Entity
 @Getter
 @Setter
@@ -19,7 +18,6 @@ public class Category {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @NonNull
     @Column(name = "name")
     private String name;
 
