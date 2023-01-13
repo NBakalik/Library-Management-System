@@ -50,8 +50,8 @@ public class BookController {
 
     @GetMapping("/authors/{id}/books")
     public ResponseEntity<List<Book>> getAllBooksByAuthorId(@PathVariable(value = "id") int id) {
-        Optional<Book> book = bookService.getBook(id);
-        if (book.isEmpty()) {
+        Optional<Author> author = authorService.getAuthor(id);
+        if (author.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         List<Book> books = bookService.findBooksByAuthorsId(id);
@@ -60,8 +60,8 @@ public class BookController {
 
     @GetMapping("/books/{id}/authors")
     public ResponseEntity<List<Author>> getAllAuthorsByBookId(@PathVariable(value = "id") int id) {
-        Optional<Author> author = authorService.getAuthor(id);
-        if (author.isEmpty()) {
+        Optional<Book> book = bookService.getBook(id);
+        if (book.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         List<Author> authors = authorService.findAuthorsByBooksId(id);
