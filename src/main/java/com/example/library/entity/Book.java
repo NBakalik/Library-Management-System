@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -27,5 +28,5 @@ public class Book {
     @ToString.Exclude
     @JsonIgnore
     @ManyToMany(mappedBy = "books", fetch = FetchType.EAGER)
-    private List<Author> authors;
+    private List<Author> authors = new ArrayList<>();
 }
