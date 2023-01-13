@@ -46,4 +46,12 @@ public class BookService {
     public List<Book> findBooksByAuthorsId(int id){
         return bookRepository.findBooksByAuthorsId(id);
     }
+
+    public List<Book> findBooksByCategoryId(int id){
+        return bookRepository.findBooksByCategoryId(id);
+    }
+
+    public void deleteBooksByCategoryId(int id){
+        bookRepository.deleteBooksByCategoryId(id);
+    }
 }

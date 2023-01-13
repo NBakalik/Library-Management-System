@@ -2,8 +2,10 @@ package com.example.library.controller;
 
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
+import com.example.library.entity.Category;
 import com.example.library.service.AuthorService;
 import com.example.library.service.BookService;
+import com.example.library.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,13 @@ public class BookController {
 
     private final BookService bookService;
     private final AuthorService authorService;
+    private final CategoryService categoryService;
 
     @Autowired
-    public BookController(BookService bookService, AuthorService authorService) {
+    public BookController(BookService bookService, AuthorService authorService, CategoryService categoryService) {
         this.bookService = bookService;
         this.authorService = authorService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/books")
@@ -64,12 +68,34 @@ public class BookController {
         return new ResponseEntity<>(authors, HttpStatus.OK);
     }
 
-    @PostMapping("/books")
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
-        if(book.getId() == null) {
-            return new ResponseEntity<>(bookService.addBook(book), HttpStatus.CREATED);
+    @GetMapping("/categories/{id}/books")
+    public ResponseEntity<List<Book>> getAllBooksByCategoryId(@PathVariable(value = "id") int id) {
+        Optional<Category> category = categoryService.getCategory(id);
+        if (category.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<Book> books = bookService.findBooksByCategoryId(id);
+        return new ResponseEntity<>(books, HttpStatus.OK);
+    }
+
+    @PostMapping("/categories/{id}/books")
+    public ResponseEntity<Book> createBook(@PathVariable(value = "id") int id, @RequestBody Book newBook) {
+        Optional<Category> category = categoryService.getCategory(id);
+        if (category.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        newBook.setCategory(category.get());
+        return new ResponseEntity<>(bookService.addBook(newBook), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/categories/{id}/books")
+    public ResponseEntity<HttpStatus> deleteAllBooksOfCategory(@PathVariable(value = "id") int id) {
+        Optional<Category> category = categoryService.getCategory(id);
+        if (category.isPresent()) {
+            bookService.deleteBooksByCategoryId(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -78,6 +104,7 @@ public class BookController {
         Optional<Book> book = bookService.getBook(id);
         if (book.isPresent()) {
             newBook.setId(id);
+            newBook.setCategory(book.get().getCategory());
             return new ResponseEntity<>(bookService.updateBook(newBook), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
