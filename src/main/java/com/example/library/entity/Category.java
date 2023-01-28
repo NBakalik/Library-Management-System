@@ -2,27 +2,28 @@ package com.example.library.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-@Entity
 @Getter
 @Setter
 @ToString
+@Document
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
-
-    @Column(name = "name")
+    private String id;
     private String name;
-
-    @ToString.Exclude
+    @DBRef(lazy = true)
     @JsonIgnore
-    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
-    private List<Book> books;
+    private List<Book> books = new ArrayList<>();
+
+    public void addBook(Book newBook) {
+        books.add(newBook);
+    }
 }

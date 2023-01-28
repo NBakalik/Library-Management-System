@@ -2,31 +2,25 @@ package com.example.library.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-@Entity
 @Getter
 @Setter
 @ToString
+@Document
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
-
-    @Column(name = "name")
+    private String id;
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    @DBRef
     private Category category;
-
-    @ToString.Exclude
+    @DBRef(lazy = true)
     @JsonIgnore
-    @ManyToMany(mappedBy = "books", fetch = FetchType.EAGER)
     private List<Author> authors = new ArrayList<>();
 }
