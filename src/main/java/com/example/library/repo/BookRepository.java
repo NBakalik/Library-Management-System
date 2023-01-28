@@ -1,18 +1,16 @@
 package com.example.library.repo;
 
 import com.example.library.entity.Book;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
-public interface BookRepository extends CrudRepository<Book, Integer> {
-    List<Book> findBooksByAuthorsId(int id);
+public interface BookRepository extends MongoRepository<Book, String> {
+    List<Book> findBooksByAuthorsId(String id);
 
-    List<Book> findBooksByCategoryId(int id);
+    List<Book> findBooksByCategoryId(String id);
 
-    @Transactional
-    void deleteBooksByCategoryId(int id);
+    void deleteBooksByCategoryId(String id);
 }
