@@ -31,7 +31,7 @@ public class AuthorController {
     }
 
     @GetMapping("/authors/{id}")
-    public ResponseEntity<Author> getAuthorById(@PathVariable("id") int id) {
+    public ResponseEntity<Author> getAuthorById(@PathVariable("id") String id) {
         Optional<Author> author = authorService.getAuthor(id);
         if (author.isPresent()) {
             return new ResponseEntity<>(author.get(), HttpStatus.OK);
@@ -50,7 +50,7 @@ public class AuthorController {
     }
 
     @PutMapping("/authors/{id}")
-    public ResponseEntity<Author> updateAuthor(@PathVariable("id") int id, @RequestBody Author newAuthor) {
+    public ResponseEntity<Author> updateAuthor(@PathVariable("id") String id, @RequestBody Author newAuthor) {
         Optional<Author> author = authorService.getAuthor(id);
         if (author.isPresent()) {
             newAuthor.setId(id);
@@ -61,7 +61,7 @@ public class AuthorController {
     }
 
     @DeleteMapping("/authors/{id}")
-    public ResponseEntity<HttpStatus> deleteAuthor(@PathVariable("id") int id) {
+    public ResponseEntity<HttpStatus> deleteAuthor(@PathVariable("id") String id) {
         Optional<Author> author = authorService.deleteAuthor(id);
         if (author.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

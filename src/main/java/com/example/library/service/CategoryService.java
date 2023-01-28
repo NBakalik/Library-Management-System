@@ -22,10 +22,10 @@ public class CategoryService {
     }
 
     public List<Category> getAllCategory() {
-        return (List<Category>) categoryRepository.findAll();
+        return categoryRepository.findAll();
     }
 
-    public Optional<Category> getCategory(Integer id) {
+    public Optional<Category> getCategory(String id) {
         return categoryRepository.findById(id);
     }
 
@@ -33,7 +33,7 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public Optional<Category> deleteCategory(Integer id) {
+    public Optional<Category> deleteCategory(String id) {
         Optional<Category> category = categoryRepository.findById(id);
         categoryRepository.deleteById(id);
         return category;

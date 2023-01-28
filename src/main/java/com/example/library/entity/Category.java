@@ -24,6 +24,7 @@ public class Category {
     private List<Book> books = new ArrayList<>();
 
     public void addBook(Book newBook) {
+        newBook.setCategory(this);
         books.add(newBook);
     }
 }

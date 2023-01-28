@@ -39,7 +39,7 @@ public class BookController {
     }
 
     @GetMapping("/books/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable("id") int id) {
+    public ResponseEntity<Book> getBookById(@PathVariable("id") String id) {
         Optional<Book> book = bookService.getBook(id);
         if (book.isPresent()) {
             return new ResponseEntity<>(book.get(), HttpStatus.OK);
@@ -49,7 +49,7 @@ public class BookController {
     }
 
     @GetMapping("/authors/{id}/books")
-    public ResponseEntity<List<Book>> getAllBooksByAuthorId(@PathVariable(value = "id") int id) {
+    public ResponseEntity<List<Book>> getAllBooksByAuthorId(@PathVariable(value = "id") String id) {
         Optional<Author> author = authorService.getAuthor(id);
         if (author.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -59,7 +59,7 @@ public class BookController {
     }
 
     @GetMapping("/books/{id}/authors")
-    public ResponseEntity<List<Author>> getAllAuthorsByBookId(@PathVariable(value = "id") int id) {
+    public ResponseEntity<List<Author>> getAllAuthorsByBookId(@PathVariable(value = "id") String id) {
         Optional<Book> book = bookService.getBook(id);
         if (book.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -69,7 +69,7 @@ public class BookController {
     }
 
     @GetMapping("/categories/{id}/books")
-    public ResponseEntity<List<Book>> getAllBooksByCategoryId(@PathVariable(value = "id") int id) {
+    public ResponseEntity<List<Book>> getAllBooksByCategoryId(@PathVariable(value = "id") String id) {
         Optional<Category> category = categoryService.getCategory(id);
         if (category.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -79,17 +79,16 @@ public class BookController {
     }
 
     @PostMapping("/categories/{id}/books")
-    public ResponseEntity<Book> createBook(@PathVariable(value = "id") int id, @RequestBody Book newBook) {
+    public ResponseEntity<Book> createBook(@PathVariable(value = "id") String id, @RequestBody Book newBook) {
         Optional<Category> category = categoryService.getCategory(id);
         if (category.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        newBook.setCategory(category.get());
-        return new ResponseEntity<>(bookService.addBook(newBook), HttpStatus.CREATED);
+        return new ResponseEntity<>(bookService.addBook(category.get(), newBook), HttpStatus.CREATED);
     }
 
     @PostMapping("/authors/{id}/books")
-    public ResponseEntity<Book> addBook(@PathVariable(value = "id") int id, @RequestBody Book newBook) {
+    public ResponseEntity<Book> addBook(@PathVariable(value = "id") String id, @RequestBody Book newBook) {
         Optional<Author> author = authorService.getAuthor(id);
         if (author.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -98,7 +97,7 @@ public class BookController {
     }
 
     @DeleteMapping("/authors/{authorId}/books/{bookId}")
-    public ResponseEntity<HttpStatus> deleteBookFromAuthor(@PathVariable(value = "authorId") int authorId, @PathVariable(value = "bookId") int bookId) {
+    public ResponseEntity<HttpStatus> deleteBookFromAuthor(@PathVariable(value = "authorId") String authorId, @PathVariable(value = "bookId") String bookId) {
         Optional<Author> author = authorService.getAuthor(authorId);
         if (author.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -109,7 +108,7 @@ public class BookController {
     }
 
     @DeleteMapping("/categories/{id}/books")
-    public ResponseEntity<HttpStatus> deleteAllBooksOfCategory(@PathVariable(value = "id") int id) {
+    public ResponseEntity<HttpStatus> deleteAllBooksOfCategory(@PathVariable(value = "id") String id) {
         Optional<Category> category = categoryService.getCategory(id);
         if (category.isPresent()) {
             bookService.deleteBooksByCategoryId(id);
@@ -120,7 +119,7 @@ public class BookController {
     }
 
     @PutMapping("/books/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable("id") int id, @RequestBody Book newBook) {
+    public ResponseEntity<Book> updateBook(@PathVariable("id") String id, @RequestBody Book newBook) {
         Optional<Book> book = bookService.getBook(id);
         if (book.isPresent()) {
             newBook.setId(id);
@@ -132,7 +131,7 @@ public class BookController {
     }
 
     @DeleteMapping("/books/{id}")
-    public ResponseEntity<HttpStatus> deleteBook(@PathVariable("id") int id) {
+    public ResponseEntity<HttpStatus> deleteBook(@PathVariable("id") String id) {
         Optional<Book> book = bookService.deleteBook(id);
         if (book.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

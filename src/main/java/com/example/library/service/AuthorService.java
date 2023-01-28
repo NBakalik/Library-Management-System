@@ -23,10 +23,10 @@ public class AuthorService {
     }
 
     public List<Author> getAllAuthor() {
-        return (List<Author>) authorRepository.findAll();
+        return authorRepository.findAll();
     }
 
-    public Optional<Author> getAuthor(Integer id) {
+    public Optional<Author> getAuthor(String id) {
         return authorRepository.findById(id);
     }
 
@@ -34,7 +34,7 @@ public class AuthorService {
         return authorRepository.save(author);
     }
 
-    public Optional<Author> deleteAuthor(Integer id) {
+    public Optional<Author> deleteAuthor(String id) {
         Optional<Author> author = authorRepository.findById(id);
         authorRepository.deleteById(id);
         return author;
@@ -44,7 +44,7 @@ public class AuthorService {
         authorRepository.deleteAll();
     }
 
-    public List<Author> findAuthorsByBooksId(int id){
+    public List<Author> findAuthorsByBooksId(String id) {
         return authorRepository.findAuthorsByBooksId(id);
     }
 }

@@ -31,7 +31,7 @@ public class CategoryController {
     }
 
     @GetMapping("/categories/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable("id") int id) {
+    public ResponseEntity<Category> getCategoryById(@PathVariable("id") String id) {
         Optional<Category> category = categoryService.getCategory(id);
         if (category.isPresent()) {
             return new ResponseEntity<>(category.get(), HttpStatus.OK);
@@ -50,7 +50,7 @@ public class CategoryController {
     }
 
     @PutMapping("/categories/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable("id") int id, @RequestBody Category newCategory) {
+    public ResponseEntity<Category> updateCategory(@PathVariable("id") String id, @RequestBody Category newCategory) {
         Optional<Category> category = categoryService.getCategory(id);
         if (category.isPresent()) {
             newCategory.setId(id);
@@ -61,7 +61,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/categories/{id}")
-    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") int id) {
+    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") String id) {
         Optional<Category> category = categoryService.deleteCategory(id);
         if (category.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
