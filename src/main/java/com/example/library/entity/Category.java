@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Getter
 @Setter
@@ -25,4 +26,13 @@ public class Category {
     @JsonIgnore
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     private List<Book> books;
+
+    public Category(String name) {
+        this.name = name;
+    }
+
+    public Category(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
