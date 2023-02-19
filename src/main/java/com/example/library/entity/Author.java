@@ -45,4 +45,17 @@ public class Author {
             book.getAuthors().remove(this);
         }
     }
+
+    public Author(Integer id, String name, Date birthDate, String country) {
+        this.id = id;
+        this.name = name;
+        this.birthDate = birthDate;
+        this.country = country;
+    }
+
+    public Author(String name, Date birthDate, String country) {
+        this.name = name;
+        this.birthDate = birthDate;
+        this.country = country;
+    }
 }
