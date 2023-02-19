@@ -1,9 +1,12 @@
 package com.example.library.service;
 
 import com.example.library.entity.Author;
+import com.example.library.entity.Book;
 import com.example.library.exeptions.AuthorAlreadyExistException;
 import com.example.library.exeptions.AuthorNotFoundException;
+import com.example.library.exeptions.BookNotFoundException;
 import com.example.library.repo.AuthorRepository;
+import com.example.library.repo.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +17,13 @@ import java.util.Optional;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
 
     @Autowired
-    public AuthorService(AuthorRepository authorRepository) {
+    public AuthorService(AuthorRepository authorRepository,
+                         BookRepository bookRepository) {
         this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
     }
 
     public Author addAuthor(Author author) {
@@ -65,7 +71,20 @@ public class AuthorService {
         authorRepository.deleteAll();
     }
 
+    public void deleteBookFromAuthor(int authorId, int bookId){
+        Optional<Author> author = authorRepository.findById(authorId);
+        if (author.isEmpty()) {
+            throw new AuthorNotFoundException("No author found with id: " + authorId);
+        }
+        author.get().removeBook(bookId);
+        authorRepository.save(author.get());
+    }
+
     public List<Author> findAuthorsByBooksId(int id) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isEmpty()) {
+            throw new BookNotFoundException("No book with id:" + id);
+        }
         return authorRepository.findAuthorsByBooksId(id);
     }
 }
