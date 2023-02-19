@@ -1,6 +1,8 @@
 package com.example.library.service;
 
 import com.example.library.entity.Author;
+import com.example.library.exeptions.AuthorAlreadyExistException;
+import com.example.library.exeptions.AuthorNotFoundException;
 import com.example.library.repo.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,32 +21,51 @@ public class AuthorService {
     }
 
     public Author addAuthor(Author author) {
+        if (author.getId() != null) {
+            throw new AuthorAlreadyExistException("Author with id:" + author.getId() + " already exists");
+        }
         return authorRepository.save(author);
     }
 
     public List<Author> getAllAuthor() {
-        return (List<Author>) authorRepository.findAll();
+        List<Author> authorList = (List<Author>) authorRepository.findAll();
+        if (authorList.isEmpty()) {
+            throw new AuthorNotFoundException("No authors found");
+        }
+        return authorList;
     }
 
-    public Optional<Author> getAuthor(Integer id) {
-        return authorRepository.findById(id);
-    }
-
-    public Author updateAuthor(Author author) {
-        return authorRepository.save(author);
-    }
-
-    public Optional<Author> deleteAuthor(Integer id) {
+    public Author getAuthor(Integer id) {
         Optional<Author> author = authorRepository.findById(id);
+        if (author.isEmpty()) {
+            throw new AuthorNotFoundException("No author with id: " + id);
+        }
+        return author.get();
+    }
+
+    public Author updateAuthor(int id, Author newAuthor) {
+        Optional<Author> author = authorRepository.findById(id);
+        if (author.isEmpty()) {
+            throw new AuthorNotFoundException("No author found with id: " + id);
+        }
+        newAuthor.setId(id);
+        return authorRepository.save(newAuthor);
+    }
+
+    public Author deleteAuthor(Integer id) {
+        Optional<Author> author = authorRepository.findById(id);
+        if (author.isEmpty()) {
+            throw new AuthorNotFoundException("No author found with id: " + id);
+        }
         authorRepository.deleteById(id);
-        return author;
+        return author.get();
     }
 
     public void deleteAll() {
         authorRepository.deleteAll();
     }
 
-    public List<Author> findAuthorsByBooksId(int id){
+    public List<Author> findAuthorsByBooksId(int id) {
         return authorRepository.findAuthorsByBooksId(id);
     }
 }
