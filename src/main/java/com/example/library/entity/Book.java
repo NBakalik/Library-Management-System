@@ -29,4 +29,15 @@ public class Book {
     @JsonIgnore
     @ManyToMany(mappedBy = "books", fetch = FetchType.EAGER)
     private List<Author> authors = new ArrayList<>();
+
+    public Book(Integer id, String name, Category category) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+    }
+
+    public Book(String name, Category category) {
+        this.name = name;
+        this.category = category;
+    }
 }
