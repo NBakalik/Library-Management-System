@@ -38,21 +38,21 @@ public class CategoryControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
-                .andExpect(jsonPath("$[0].id").value("1"))
+                .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("Comedy"))
-                .andExpect(jsonPath("$[1].id").value("2"))
+                .andExpect(jsonPath("$[1].id").value(2))
                 .andExpect(jsonPath("$[1].name").value("History"));
     }
 
     @Test
     public void getCategoryByIdTest() throws Exception {
-        when(categoryService.getCategory(1))
+        when(categoryService.getCategory(anyInt()))
                 .thenReturn(new Category(1, "Comedy"));
 
         mockMvc.perform(get("/api/categories/{id}", 1)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("Comedy"));
     }
 

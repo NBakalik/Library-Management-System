@@ -53,7 +53,7 @@ public class AuthorControllerTest {
 
     @Test
     public void getAuthorByIdTest() throws Exception {
-        when(authorService.getAuthor(1))
+        when(authorService.getAuthor(anyInt()))
                 .thenReturn(new Author(1, "John", sdf.parse("2022-11-11"), "USA"));
 
         mockMvc.perform(get("/api/authors/{id}", 1)
