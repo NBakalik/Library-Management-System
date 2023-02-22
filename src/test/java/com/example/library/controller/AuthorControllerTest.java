@@ -3,6 +3,7 @@ package com.example.library.controller;
 import com.example.library.entity.Author;
 import com.example.library.service.AuthorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -12,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -31,6 +33,10 @@ public class AuthorControllerTest {
     @MockBean
     private AuthorService authorService;
 
+    @BeforeAll
+    public static  void setTimeZone(){
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
     @Test
     public void getAllAuthorsTest() throws Exception {
         when(authorService.getAllAuthor())
@@ -43,11 +49,11 @@ public class AuthorControllerTest {
                 .andExpect(jsonPath("$.size()").value(2))
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("John"))
-                .andExpect(jsonPath("$[0].birthDate").value("2022-02-18T22:00:00.000+00:00"))
+                .andExpect(jsonPath("$[0].birthDate").value("2022-02-19T00:00:00.000+00:00"))
                 .andExpect(jsonPath("$[0].country").value("USA"))
                 .andExpect(jsonPath("$[1].id").value(2))
                 .andExpect(jsonPath("$[1].name").value("Jack"))
-                .andExpect(jsonPath("$[1].birthDate").value("2022-08-03T21:00:00.000+00:00"))
+                .andExpect(jsonPath("$[1].birthDate").value("2022-08-04T00:00:00.000+00:00"))
                 .andExpect(jsonPath("$[1].country").value("France"));
     }
 
@@ -61,7 +67,7 @@ public class AuthorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("John"))
-                .andExpect(jsonPath("$.birthDate").value("2022-11-10T22:00:00.000+00:00"))
+                .andExpect(jsonPath("$.birthDate").value("2022-11-11T00:00:00.000+00:00"))
                 .andExpect(jsonPath("$.country").value("USA"));
     }
 
@@ -80,7 +86,7 @@ public class AuthorControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("John"))
-                .andExpect(jsonPath("$.birthDate").value("2022-11-10T22:00:00.000+00:00"))
+                .andExpect(jsonPath("$.birthDate").value("2022-11-11T00:00:00.000+00:00"))
                 .andExpect(jsonPath("$.country").value("USA"));
     }
 
@@ -98,7 +104,7 @@ public class AuthorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("John"))
-                .andExpect(jsonPath("$.birthDate").value("2022-11-10T22:00:00.000+00:00"))
+                .andExpect(jsonPath("$.birthDate").value("2022-11-11T00:00:00.000+00:00"))
                 .andExpect(jsonPath("$.country").value("USA"));
     }
 
@@ -114,7 +120,7 @@ public class AuthorControllerTest {
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("John"))
-                .andExpect(jsonPath("$.birthDate").value("2022-11-10T22:00:00.000+00:00"))
+                .andExpect(jsonPath("$.birthDate").value("2022-11-11T00:00:00.000+00:00"))
                 .andExpect(jsonPath("$.country").value("USA"));
     }
 
