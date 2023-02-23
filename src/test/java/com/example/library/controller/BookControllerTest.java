@@ -100,11 +100,11 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$.size()").value(2))
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("John"))
-                .andExpect(jsonPath("$[0].birthDate").value("2022-02-18T22:00:00.000+00:00"))
+                .andExpect(jsonPath("$[0].birthDate").value("2022-02-19T00:00:00.000+00:00"))
                 .andExpect(jsonPath("$[0].country").value("USA"))
                 .andExpect(jsonPath("$[1].id").value(2))
                 .andExpect(jsonPath("$[1].name").value("Jack"))
-                .andExpect(jsonPath("$[1].birthDate").value("2022-08-03T21:00:00.000+00:00"))
+                .andExpect(jsonPath("$[1].birthDate").value("2022-08-04T00:00:00.000+00:00"))
                 .andExpect(jsonPath("$[1].country").value("France"));
     }
 
