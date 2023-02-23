@@ -26,17 +26,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthorControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
+    @MockBean
+    private AuthorService authorService;
     ObjectMapper objectMapper = new ObjectMapper();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-    @MockBean
-    private AuthorService authorService;
-
     @BeforeAll
-    public static  void setTimeZone(){
+    public static void setTimeZone() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
+
     @Test
     public void getAllAuthorsTest() throws Exception {
         when(authorService.getAllAuthor())
@@ -62,7 +61,7 @@ public class AuthorControllerTest {
         when(authorService.getAuthor(anyInt()))
                 .thenReturn(new Author(1, "John", sdf.parse("2022-11-11"), "USA"));
 
-        mockMvc.perform(get("/api/authors/{id}", 1)
+        mockMvc.perform(get("/api/authors/{id}", anyInt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -110,12 +109,10 @@ public class AuthorControllerTest {
 
     @Test
     public void deleteAuthorTest() throws Exception {
-        Author author = new Author(1, "John", sdf.parse("2022-11-11"), "USA");
-
         when(authorService.deleteAuthor(anyInt()))
-                .thenReturn(author);
+                .thenReturn(new Author(1, "John", sdf.parse("2022-11-11"), "USA"));
 
-        mockMvc.perform(delete("/api/authors/{id}", 1)
+        mockMvc.perform(delete("/api/authors/{id}", anyInt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.id").value(1))

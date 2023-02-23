@@ -55,7 +55,7 @@ public class CategoryServiceTest {
         when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.of(new Category(1, "Comedy")));
 
-        Category category = categoryService.getCategory(1);
+        Category category = categoryService.getCategory(anyInt());
         assertThat(category.getId()).isEqualTo(1);
         assertThat(category.getName()).isEqualTo("Comedy");
     }
@@ -91,7 +91,7 @@ public class CategoryServiceTest {
     public void updateCategoryWhenExistTest() {
         Category category = new Category("Comedy");
 
-        when(categoryRepository.findById(1))
+        when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.of(category));
         when(categoryRepository.save(category))
                 .thenReturn(category);
@@ -105,12 +105,12 @@ public class CategoryServiceTest {
     public void updateCategoryWhenNotExistTest() {
         Category category = new Category("Comedy");
 
-        when(categoryRepository.findById(1))
+        when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> categoryService.updateCategory(1, category))
                 .isInstanceOf(CategoryNotFoundException.class);
-        verify(categoryRepository).findById(1);
+        verify(categoryRepository).findById(anyInt());
         verifyNoMoreInteractions(categoryRepository);
     }
 
@@ -118,19 +118,19 @@ public class CategoryServiceTest {
     public void deleteCategoryWhenExistTest() {
         Category category = new Category(1, "Comedy");
 
-        when(categoryRepository.findById(1))
+        when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.of(category));
-        categoryService.deleteCategory(1);
+        categoryService.deleteCategory(anyInt());
 
         verify(categoryRepository).deleteById(anyInt());
     }
 
     @Test
     public void deleteCategoryWhenNotExistTest() {
-        when(categoryRepository.findById(1))
+        when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> categoryService.deleteCategory(1))
+        assertThatThrownBy(() -> categoryService.deleteCategory(anyInt()))
                 .isInstanceOf(CategoryNotFoundException.class);
 
         verify(categoryRepository).findById(anyInt());

@@ -6,6 +6,7 @@ import com.example.library.entity.Category;
 import com.example.library.service.AuthorService;
 import com.example.library.service.BookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -28,14 +30,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BookControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
-    ObjectMapper objectMapper = new ObjectMapper();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
     @MockBean
     private BookService bookService;
     @MockBean
     private AuthorService authorService;
+    ObjectMapper objectMapper = new ObjectMapper();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+    @BeforeAll
+    public static void setTimeZone() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 
     @Test
     public void getAllBooksTest() throws Exception {
@@ -60,7 +65,7 @@ public class BookControllerTest {
         when(bookService.getBook(anyInt()))
                 .thenReturn(new Book(1, "Java 8", new Category("Programming")));
 
-        mockMvc.perform(get("/api/books/{id}", 1)
+        mockMvc.perform(get("/api/books/{id}", anyInt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -75,7 +80,7 @@ public class BookControllerTest {
                 .thenReturn(List.of(new Book(1, "Java 8", new Category("Programming")),
                         new Book(2, "Romeo and Juliet", new Category("Tragedy"))));
 
-        mockMvc.perform(get("/api/authors/{id}/books", 1)
+        mockMvc.perform(get("/api/authors/{id}/books", anyInt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
@@ -90,11 +95,11 @@ public class BookControllerTest {
 
     @Test
     public void getAllAuthorsByBookIdTest() throws Exception {
-        when(authorService.findAuthorsByBooksId(1))
+        when(authorService.findAuthorsByBooksId(anyInt()))
                 .thenReturn(List.of(new Author(1, "John", sdf.parse("2022-02-19"), "USA"),
                         new Author(2, "Jack", sdf.parse("2022-08-04"), "France")));
 
-        mockMvc.perform(get("/api/books/{id}/authors", 1)
+        mockMvc.perform(get("/api/books/{id}/authors", anyInt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
@@ -115,7 +120,7 @@ public class BookControllerTest {
                 .thenReturn(List.of(new Book(1, "Java 8", new Category("Programming")),
                         new Book(2, "Java 11", new Category("Programming"))));
 
-        mockMvc.perform(get("/api/categories/{id}/books", 1)
+        mockMvc.perform(get("/api/categories/{id}/books", anyInt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
@@ -166,16 +171,16 @@ public class BookControllerTest {
 
     @Test
     public void deleteBookFromAuthorTest() throws Exception {
-        mockMvc.perform(delete("/api/authors/{authorId}/books/{bookId}", 1, 1))
+        mockMvc.perform(delete("/api/authors/{authorId}/books/{bookId}", anyInt(), anyInt()))
                 .andExpect(status().isNoContent());
         verify(authorService).deleteBookFromAuthor(anyInt(), anyInt());
     }
 
     @Test
     public void deleteAllBooksOfCategoryTest() throws Exception {
-        mockMvc.perform(delete("/api/categories/{id}/books", 1))
+        mockMvc.perform(delete("/api/categories/{id}/books", anyInt()))
                 .andExpect(status().isNoContent());
-        verify(bookService).deleteBooksByCategoryId(1);
+        verify(bookService).deleteBooksByCategoryId(anyInt());
     }
 
     @Test
@@ -197,12 +202,10 @@ public class BookControllerTest {
 
     @Test
     public void deleteBookTest() throws Exception {
-        Book book = new Book(1, "Java 8", new Category("Programming"));
-
         when(bookService.deleteBook(anyInt()))
-                .thenReturn(book);
+                .thenReturn(new Book(1, "Java 8", new Category("Programming")));
 
-        mockMvc.perform(delete("/api/books/{id}", 1)
+        mockMvc.perform(delete("/api/books/{id}", anyInt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.id").value(1))

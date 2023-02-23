@@ -23,11 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CategoryControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
     @MockBean
     private CategoryService categoryService;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     public void getAllCategoriesTest() throws Exception {
@@ -49,7 +47,7 @@ public class CategoryControllerTest {
         when(categoryService.getCategory(anyInt()))
                 .thenReturn(new Category(1, "Comedy"));
 
-        mockMvc.perform(get("/api/categories/{id}", 1)
+        mockMvc.perform(get("/api/categories/{id}", anyInt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -89,12 +87,10 @@ public class CategoryControllerTest {
 
     @Test
     public void deleteCategoryTest() throws Exception {
-        Category category = new Category("Comedy");
-
         when(categoryService.deleteCategory(anyInt()))
-                .thenReturn(category);
+                .thenReturn(new Category("Comedy"));
 
-        mockMvc.perform(delete("/api/categories/{id}", 1)
+        mockMvc.perform(delete("/api/categories/{id}", anyInt())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$.name").value("Comedy"));

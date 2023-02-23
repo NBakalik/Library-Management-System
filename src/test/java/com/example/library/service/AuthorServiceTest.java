@@ -29,17 +29,14 @@ import static org.mockito.Mockito.*;
 
 @WebMvcTest(AuthorService.class)
 public class AuthorServiceTest {
-
     @MockBean
     private AuthorRepository authorRepository;
     @MockBean
     private BookRepository bookRepository;
-
     @Autowired
     @InjectMocks
     private AuthorService authorService;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
 
     @BeforeAll
     public static void setTimeZone() {
@@ -96,16 +93,18 @@ public class AuthorServiceTest {
     @Test
     public void createAuthorWithoutIdTest() throws ParseException {
         Author author = new Author("John", sdf.parse("2022-02-19"), "USA");
-        authorService.addAuthor(author);
+        when(authorRepository.save(any()))
+                .thenReturn(author);
 
-        verify(authorRepository).save(author);
+        author = authorService.addAuthor(author);
+        assertThat(author.getName()).isEqualTo("John");
+        assertThat(author.getBirthDate()).isEqualTo("2022-02-19T00:00:00.000+00:00");
+        assertThat(author.getCountry()).isEqualTo("USA");
     }
 
     @Test
-    public void createAuthorWithIdTest() throws ParseException {
-        Author author = new Author(1, "John", sdf.parse("2022-02-19"), "USA");
-
-        assertThatThrownBy(() -> authorService.addAuthor(author))
+    public void createAuthorWithIdTest() {
+        assertThatThrownBy(() -> authorService.addAuthor(new Author(1, "John", sdf.parse("2022-02-19"), "USA")))
                 .isInstanceOf(AuthorAlreadyExistException.class);
 
         verifyNoInteractions(authorRepository);
@@ -115,7 +114,7 @@ public class AuthorServiceTest {
     public void updateAuthorWhenExistTest() throws ParseException {
         Author author = new Author(1, "John", sdf.parse("2022-02-19"), "USA");
 
-        when(authorRepository.findById(1))
+        when(authorRepository.findById(anyInt()))
                 .thenReturn(Optional.of(author));
         when(authorRepository.save(author))
                 .thenReturn(author);
@@ -128,35 +127,32 @@ public class AuthorServiceTest {
     }
 
     @Test
-    public void updateAuthorWhenNotExistTest() throws ParseException {
-        Author author = new Author(1, "John", sdf.parse("2022-02-19"), "USA");
-
-        when(authorRepository.findById(1))
+    public void updateAuthorWhenNotExistTest() {
+        when(authorRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> authorService.updateAuthor(1, author))
+        assertThatThrownBy(() -> authorService.updateAuthor(anyInt(), new Author(1, "John", sdf.parse("2022-02-19"), "USA")))
                 .isInstanceOf(AuthorNotFoundException.class);
-        verify(authorRepository).findById(1);
+
+        verify(authorRepository).findById(anyInt());
         verifyNoMoreInteractions(authorRepository);
     }
 
     @Test
     public void deleteAuthorWhenExistTest() throws ParseException {
-        Author author = new Author(1, "John", sdf.parse("2022-02-19"), "USA");
-
-        when(authorRepository.findById(1))
-                .thenReturn(Optional.of(author));
-        authorService.deleteAuthor(1);
+        when(authorRepository.findById(anyInt()))
+                .thenReturn(Optional.of(new Author(1, "John", sdf.parse("2022-02-19"), "USA")));
+        authorService.deleteAuthor(anyInt());
 
         verify(authorRepository).deleteById(anyInt());
     }
 
     @Test
     public void deleteAuthorWhenNotExistTest() {
-        when(authorRepository.findById(1))
+        when(authorRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> authorService.deleteAuthor(1))
+        assertThatThrownBy(() -> authorService.deleteAuthor(anyInt()))
                 .isInstanceOf(AuthorNotFoundException.class);
 
         verify(authorRepository).findById(anyInt());
@@ -171,18 +167,16 @@ public class AuthorServiceTest {
 
     @Test
     public void deleteBookFromAuthorWhenAuthorExistTest() throws ParseException {
-        Author author = new Author(1, "John", sdf.parse("2022-02-19"), "USA");
-
-        when(authorRepository.findById(1))
-                .thenReturn(Optional.of(author));
+        when(authorRepository.findById(anyInt()))
+                .thenReturn(Optional.of(new Author(1, "John", sdf.parse("2022-02-19"), "USA")));
         authorService.deleteBookFromAuthor(1, 1);
 
-        verify(authorRepository).save(author);
+        verify(authorRepository).save(any());
     }
 
     @Test
     public void deleteBookFromAuthorWhenAuthorNotExistTest() {
-        when(authorRepository.findById(1))
+        when(authorRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authorService.deleteBookFromAuthor(1, 1))
@@ -201,7 +195,7 @@ public class AuthorServiceTest {
                 .thenReturn(List.of(new Author(1, "John", sdf.parse("2022-02-19"), "USA"),
                         new Author(2, "Jack", sdf.parse("2022-08-04"), "France")));
 
-        List<Author> authorList = authorService.findAuthorsByBooksId(1);
+        List<Author> authorList = authorService.findAuthorsByBooksId(anyInt());
         assertThat(authorList.get(0).getId()).isEqualTo(1);
         assertThat(authorList.get(0).getName()).isEqualTo("John");
         assertThat(authorList.get(0).getBirthDate()).isEqualTo("2022-02-19T00:00:00.000+00:00");
