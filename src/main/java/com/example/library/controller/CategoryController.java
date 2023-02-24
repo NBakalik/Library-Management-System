@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -24,50 +23,30 @@ public class CategoryController {
     @GetMapping("/categories")
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategory();
-        if (categories.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
     @GetMapping("/categories/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable("id") int id) {
-        Optional<Category> category = categoryService.getCategory(id);
-        if (category.isPresent()) {
-            return new ResponseEntity<>(category.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Category category = categoryService.getCategory(id);
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @PostMapping("/categories")
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        if(category.getId() == null) {
-            return new ResponseEntity<>(categoryService.addCategory(category), HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(categoryService.addCategory(category), HttpStatus.CREATED);
     }
 
     @PutMapping("/categories/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable("id") int id, @RequestBody Category newCategory) {
-        Optional<Category> category = categoryService.getCategory(id);
-        if (category.isPresent()) {
-            newCategory.setId(id);
-            return new ResponseEntity<>(categoryService.updateCategory(newCategory), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Category category = categoryService.updateCategory(id, newCategory);
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @DeleteMapping("/categories/{id}")
-    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable("id") int id) {
-        Optional<Category> category = categoryService.deleteCategory(id);
-        if (category.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Category> deleteCategory(@PathVariable("id") int id) {
+        Category category = categoryService.deleteCategory(id);
+        return new ResponseEntity<>(category, HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/categories")

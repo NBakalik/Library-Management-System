@@ -1,6 +1,8 @@
 package com.example.library.service;
 
 import com.example.library.entity.Category;
+import com.example.library.exeptions.CategoryAlreadyExistException;
+import com.example.library.exeptions.CategoryNotFoundException;
 import com.example.library.repo.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,25 +20,44 @@ public class CategoryService {
     }
 
     public Category addCategory(Category category) {
+        if (category.getId() != null) {
+            throw new CategoryAlreadyExistException("Category with id:" + category.getId() + " already exists");
+        }
         return categoryRepository.save(category);
     }
 
     public List<Category> getAllCategory() {
-        return (List<Category>) categoryRepository.findAll();
+        List<Category> categoryList = (List<Category>) categoryRepository.findAll();
+        if (categoryList.isEmpty()) {
+            throw new CategoryNotFoundException("No categories found");
+        }
+        return categoryList;
     }
 
-    public Optional<Category> getCategory(Integer id) {
-        return categoryRepository.findById(id);
-    }
-
-    public Category updateCategory(Category category) {
-        return categoryRepository.save(category);
-    }
-
-    public Optional<Category> deleteCategory(Integer id) {
+    public Category getCategory(Integer id) {
         Optional<Category> category = categoryRepository.findById(id);
+        if (category.isEmpty()) {
+            throw new CategoryNotFoundException("No category with id: " + id);
+        }
+        return category.get();
+    }
+
+    public Category updateCategory(int id, Category newCategory) {
+        Optional<Category> category = categoryRepository.findById(id);
+        if (category.isEmpty()) {
+            throw new CategoryNotFoundException("No category found with id: " + id);
+        }
+        newCategory.setId(id);
+        return categoryRepository.save(newCategory);
+    }
+
+    public Category deleteCategory(Integer id) {
+        Optional<Category> category = categoryRepository.findById(id);
+        if (category.isEmpty()) {
+            throw new CategoryNotFoundException("No category found with id: " + id);
+        }
         categoryRepository.deleteById(id);
-        return category;
+        return category.get();
     }
 
     public void deleteAll() {
