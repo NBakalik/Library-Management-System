@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/authors")
 public class AuthorController {
 
     private final AuthorService authorService;
@@ -20,36 +20,36 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
-    @GetMapping("/authors")
+    @GetMapping
     public ResponseEntity<List<Author>> getAllAuthors() {
         List<Author> authors = authorService.getAllAuthor();
         return new ResponseEntity<>(authors, HttpStatus.OK);
     }
 
-    @GetMapping("/authors/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Author> getAuthorById(@PathVariable("id") int id) {
         Author author = authorService.getAuthor(id);
         return new ResponseEntity<>(author, HttpStatus.OK);
     }
 
-    @PostMapping("/authors")
+    @PostMapping
     public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
         return new ResponseEntity<>(authorService.addAuthor(author), HttpStatus.CREATED);
     }
 
-    @PutMapping("/authors/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<Author> updateAuthor(@PathVariable("id") int id, @RequestBody Author newAuthor) {
         Author author = authorService.updateAuthor(id, newAuthor);
         return new ResponseEntity<>(author, HttpStatus.OK);
     }
 
-    @DeleteMapping("/authors/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Author> deleteAuthor(@PathVariable("id") int id) {
         Author author = authorService.deleteAuthor(id);
         return new ResponseEntity<>(author, HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/authors")
+    @DeleteMapping
     public ResponseEntity<HttpStatus> deleteAllAuthors() {
         authorService.deleteAll();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

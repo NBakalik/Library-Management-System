@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -20,36 +20,36 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/categories")
+    @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategory();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @GetMapping("/categories/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable("id") int id) {
         Category category = categoryService.getCategory(id);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
-    @PostMapping("/categories")
+    @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
         return new ResponseEntity<>(categoryService.addCategory(category), HttpStatus.CREATED);
     }
 
-    @PutMapping("/categories/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable("id") int id, @RequestBody Category newCategory) {
         Category category = categoryService.updateCategory(id, newCategory);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
-    @DeleteMapping("/categories/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Category> deleteCategory(@PathVariable("id") int id) {
         Category category = categoryService.deleteCategory(id);
         return new ResponseEntity<>(category, HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/categories")
+    @DeleteMapping
     public ResponseEntity<HttpStatus> deleteAllCategories() {
         categoryService.deleteAll();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
