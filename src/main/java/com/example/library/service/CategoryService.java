@@ -7,6 +7,7 @@ import com.example.library.repo.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,15 +43,18 @@ public class CategoryService {
         return category.get();
     }
 
+    @Transactional
     public Category updateCategory(int id, Category newCategory) {
         Optional<Category> category = categoryRepository.findById(id);
         if (category.isEmpty()) {
             throw new CategoryNotFoundException("No category found with id: " + id);
         }
-        newCategory.setId(id);
-        return categoryRepository.save(newCategory);
+        category.get().setName(newCategory.getName());
+        return newCategory;
+//        return categoryRepository.save(newCategory);
     }
 
+    @Transactional
     public Category deleteCategory(Integer id) {
         Optional<Category> category = categoryRepository.findById(id);
         if (category.isEmpty()) {

@@ -27,7 +27,7 @@ public class Book {
 
     @ToString.Exclude
     @JsonIgnore
-    @ManyToMany(mappedBy = "books", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "books")
     private List<Author> authors = new ArrayList<>();
 
     public Book(Integer id, String name, Category category) {

@@ -12,6 +12,7 @@ import com.example.library.repo.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,15 +31,17 @@ public class BookService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Transactional
     public Book addBookToCategory(int categoryId, Book newBook) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (category.isEmpty()) {
             throw new CategoryNotFoundException("No category with id: " + categoryId);
         }
-        newBook.setCategory(category.get());
-        return bookRepository.save(newBook);
+        category.get().addBook(newBook);
+        return newBook;
     }
 
+    @Transactional
     public Book addBookToAuthor(int authorId, Book newBook) {
         Optional<Author> author = authorRepository.findById(authorId);
         if (author.isEmpty()) {
@@ -46,14 +49,13 @@ public class BookService {
         }
         if (newBook.getId() == null) {
             author.get().addBook(newBook);
-            return bookRepository.save(newBook);
+            return newBook;
         } else {
             Optional<Book> book = bookRepository.findById(newBook.getId());
-            if(book.isEmpty()){
+            if (book.isEmpty()) {
                 throw new BookNotFoundException("No book with id: " + newBook.getId());
             }
             author.get().addBook(book.get());
-            authorRepository.save(author.get());
             return book.get();
         }
     }
@@ -74,15 +76,18 @@ public class BookService {
         return book.get();
     }
 
+    @Transactional
     public Book updateBook(int id, Book newBook) {
         Optional<Book> book = bookRepository.findById(id);
         if (book.isEmpty()) {
             throw new BookNotFoundException("No book found with id: " + id);
         }
-        newBook.setId(id);
-        return bookRepository.save(newBook);
+        book.get().setName(newBook.getName());
+        book.get().setCategory(newBook.getCategory());
+        return newBook;
     }
 
+    @Transactional
     public Book deleteBook(Integer id) {
         Optional<Book> book = bookRepository.findById(id);
         if (book.isEmpty()) {
@@ -112,6 +117,7 @@ public class BookService {
         return bookRepository.findBooksByCategoryId(id);
     }
 
+    @Transactional
     public void deleteBooksByCategoryId(int id) {
         Optional<Category> category = categoryRepository.findById(id);
         if (category.isEmpty()) {

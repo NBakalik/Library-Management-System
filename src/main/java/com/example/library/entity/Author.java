@@ -27,7 +27,7 @@ public class Author {
     @Column(name = "country")
     private String country;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "author_has_book",
             joinColumns = {@JoinColumn(name = "author_id")},
             inverseJoinColumns = {@JoinColumn(name = "book_id")})

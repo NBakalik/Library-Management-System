@@ -10,6 +10,7 @@ import com.example.library.repo.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,15 +50,20 @@ public class AuthorService {
         return author.get();
     }
 
+    @Transactional
     public Author updateAuthor(int id, Author newAuthor) {
         Optional<Author> author = authorRepository.findById(id);
         if (author.isEmpty()) {
             throw new AuthorNotFoundException("No author found with id: " + id);
         }
-        newAuthor.setId(id);
-        return authorRepository.save(newAuthor);
+        author.get().setName(newAuthor.getName());
+        author.get().setBirthDate(newAuthor.getBirthDate());
+        author.get().setCountry(newAuthor.getCountry());
+        author.get().setBooks(newAuthor.getBooks());
+        return newAuthor;
     }
 
+    @Transactional
     public Author deleteAuthor(Integer id) {
         Optional<Author> author = authorRepository.findById(id);
         if (author.isEmpty()) {
@@ -71,15 +77,16 @@ public class AuthorService {
         authorRepository.deleteAll();
     }
 
+    @Transactional
     public void deleteBookFromAuthor(int authorId, int bookId){
         Optional<Author> author = authorRepository.findById(authorId);
         if (author.isEmpty()) {
             throw new AuthorNotFoundException("No author found with id: " + authorId);
         }
         author.get().removeBook(bookId);
-        authorRepository.save(author.get());
     }
 
+    @Transactional
     public List<Author> findAuthorsByBooksId(int id) {
         Optional<Book> book = bookRepository.findById(id);
         if (book.isEmpty()) {

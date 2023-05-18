@@ -24,7 +24,7 @@ public class Category {
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "category")
     private List<Book> books;
 
     public Category(String name) {
@@ -34,5 +34,10 @@ public class Category {
     public Category(Integer id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public void addBook(Book book){
+        this.books.add(book);
+        book.setCategory(this);
     }
 }
