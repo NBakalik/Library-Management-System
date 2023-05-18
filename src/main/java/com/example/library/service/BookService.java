@@ -84,7 +84,7 @@ public class BookService {
         }
         book.get().setName(newBook.getName());
         book.get().setCategory(newBook.getCategory());
-        return newBook;
+        return book.get();
     }
 
     @Transactional

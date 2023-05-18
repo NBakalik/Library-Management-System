@@ -60,7 +60,7 @@ public class AuthorService {
         author.get().setBirthDate(newAuthor.getBirthDate());
         author.get().setCountry(newAuthor.getCountry());
         author.get().setBooks(newAuthor.getBooks());
-        return newAuthor;
+        return author.get();
     }
 
     @Transactional

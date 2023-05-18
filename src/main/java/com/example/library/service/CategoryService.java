@@ -50,8 +50,7 @@ public class CategoryService {
             throw new CategoryNotFoundException("No category found with id: " + id);
         }
         category.get().setName(newCategory.getName());
-        return newCategory;
-//        return categoryRepository.save(newCategory);
+        return category.get();
     }
 
     @Transactional
